@@ -1,19 +1,20 @@
-const inquirer = require("inquirer")
-const mysql = require("mysql")
-const cTable = require('console.table');
+const inquirer = require("inquirer");
+const mysql = require("mysql");
+const cTable = require("console.table");
 
 const connection = mysql.createConnection({
-    host: "localhost",
-    port: 3306,
-    user: "root",
-    password: "password",
-    database: "employeeDB"
-  });
+  host: "localhost",
+  port: 3306,
+  user: "root",
+  password: "password",
+  database: "employeeDB",
+});
 
-  function inquire() { [
-    inquirer.prompt({
+function inquire() {
+  inquirer
+    .prompt({
       type: "list",
-      message: "What do you need to do?",
+      message: "What would you like to do?",
       name: "choice",
       choices: [
         "View All Employees",
@@ -22,10 +23,34 @@ const connection = mysql.createConnection({
         "Edit Employee Info",
         "Add an Employee",
         "Add a Role",
-        "Add a Department"
-      ]   
+        "Add a Department",
+        "Exit"
+      ],
     })
-  ]}
 
-  //sql queries to post, read and delete data
-  
+    .then(function (response) {
+      // console.log(response)
+      if (response.choice === "View All Employees") {
+        viewAllEmployees();
+      }
+      if (response.choice === "View All Employee Roles") {
+        viewEmployeeRoles();
+      }
+      if (response.choice === "View All Employee Departments") {
+        viewAllDepartments();
+      }
+      if (response.choice === "Edit Employee Info") {
+        updateEmployee();
+      }
+      if (response.choice === "Add an Employee") {
+        addEmployee();
+      }
+      if (response.choice === "Add a Role") {
+        addRole();
+      }
+      if (response.choice === "Add a Department") {
+        addDepartment();
+      }
+    });
+}
+
