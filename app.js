@@ -65,3 +65,14 @@ function viewAllEmployees() {
   );
 }
 
+function viewEmployeeRoles() {
+  connection.query(
+    "SELECT employee.first_name, employee.last_name, role.title AS Title FROM employee JOIN role ON employee.role_id = role.id;",
+    function (err, res) {
+      if (err) throw err;
+      console.table(res);
+     inquire();
+    }
+  );
+}
+
