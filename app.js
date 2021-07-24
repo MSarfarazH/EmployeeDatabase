@@ -108,7 +108,7 @@ function pickManager() {
     "SELECT first_name, last_name FROM employee WHERE manager_id IS NULL",
     function (err, res) {
       if (err) throw err;
-      for (const i = 0; i < res.length; i++) {
+      for (let i = 0; i < res.length; i++) {
         managersArray.push(res[i].first_name);
       }
     }
@@ -129,7 +129,7 @@ function updateEmployee() {
             type: "list",
             choices: function () {
               const lastName = [];
-              for (const i = 0; i < res.length; i++) {
+              for (let i = 0; i < res.length; i++) {
                 lastName.push(res[i].last_name);
               }
               return lastName;
@@ -144,7 +144,7 @@ function updateEmployee() {
           },
         ])
         .then(function (res) {
-          const roleId = pickRole().indexOf(res.role) + 1;
+          const roleId = pickRole().indexOf(res.role) +1;
           connection.query(
             "UPDATE employee SET WHERE ?",
             {
