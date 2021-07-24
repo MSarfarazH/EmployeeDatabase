@@ -10,6 +10,10 @@ const connection = mysql.createConnection({
   database: "employeeDB",
 });
 
+connection.connect((err) => {
+  if (err) throw err;
+});
+
 function inquire() {
   inquirer
     .prompt({
@@ -24,7 +28,7 @@ function inquire() {
         "Add an Employee",
         "Add a Role",
         "Add a Department",
-        "Exit"
+        "Exit",
       ],
     })
 
@@ -60,7 +64,7 @@ function viewAllEmployees() {
     function (err, res) {
       if (err) throw err;
       console.table(res);
-     inquire();
+      inquire();
     }
   );
 }
@@ -71,8 +75,45 @@ function viewEmployeeRoles() {
     function (err, res) {
       if (err) throw err;
       console.table(res);
-     inquire();
+      inquire();
     }
   );
 }
 
+function viewAllDepartments() {
+  connection.query(
+    "SELECT employee.first_name, employee.last_name, department.name AS Department FROM employee JOIN role ON employee.role_id = role.id JOIN department ON role.department_id = department.id ORDER BY employee.id;",
+    function (err, res) {
+      if (err) throw err;
+      console.table(res);
+      inquire();
+    }
+  );
+}
+
+const rolesArray = [];
+function pickRole() {
+  connection.query("SELECT * FROM role", function (err, res) {
+    for (let i = 0; i < res.length; i++) {
+      roleArray.push(res[i].title);
+  }
+  });
+  return rolesArray;
+}
+
+const managersArray = [];
+function selectManager() {
+  connection.query(
+    "SELECT first_name, last_name FROM employee WHERE manager_id IS NULL",
+    function (err, res) {
+      if (err) throw err;
+      for (const i = 0; i < res.length; i++) {
+        managersArray.push(res[i].first_name);
+      }
+    }
+  );
+  return managersArray;
+}
+
+
+inquire();
