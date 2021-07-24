@@ -92,8 +92,8 @@ function viewAllDepartments() {
   );
 }
 
-const rolesArray = [];
 function pickRole() {
+  const rolesArray = [];
   connection.query("SELECT * FROM role", function (err, res) {
     for (let i = 0; i < res.length; i++) {
       roleArray.push(res[i].title);
@@ -102,8 +102,8 @@ function pickRole() {
   return rolesArray;
 }
 
-const managersArray = [];
 function pickManager() {
+  const managersArray = [];
   connection.query(
     "SELECT first_name, last_name FROM employee WHERE manager_id IS NULL",
     function (err, res) {
@@ -144,14 +144,14 @@ function updateEmployee() {
           },
         ])
         .then(function (res) {
-          const roleId = pickRole().indexOf(res.role) +1;
+          const roleID = pickRole().indexOf(res.role) + 1;
           connection.query(
             "UPDATE employee SET WHERE ?",
             {
               last_name: res.lastName,
             },
             {
-              role_id: roleId,
+              role_id: roleID,
             },
             function (err) {
               if (err) throw err;
@@ -191,15 +191,75 @@ function addEmployee() {
       },
     ])
     .then(function (res) {
-      const roleId = pickRole().indexOf(res.role) +1;
-      const managerId = pickManager().indexOf(res.choice) +1;
+      const roleID = pickRole().indexOf(res.role) +1;
+      const managerID = pickManager().indexOf(res.choice) +1;
+      
       connection.query(
         "INSERT INTO employee SET ?",
         {
           first_name: res.firstName,
           last_name: res.lastName,
-          manager_id: managerId,
-          role_id: roleId,
+          manager_id: managerID,
+          role_id: roleID,
+        },
+        function (err) {
+          if (err) throw err;
+          console.table(res);
+          inquire();
+        }
+      );
+    });
+}
+
+function addRole() {
+  connection.query(
+    "SELECT role.title AS Title, role.salary AS Salary FROM role",
+    function (err, res) {
+      inquirer
+        .prompt([
+          {
+            name: "Title",
+            type: "input",
+            message: "Please enter title of the role",
+          },
+          {
+            name: "Salary",
+            type: "input",
+            message: "Please enter the role's salary",
+          },
+        ])
+        .then(function (res) {
+          connection.query(
+            "INSERT INTO role SET ?",
+            {
+              title: res.Title,
+              salary: res.Salary,
+            },
+            function (err) {
+              if (err) throw err;
+              console.table(res);
+              inquire();
+            }
+          );
+        });
+    }
+  );
+}
+
+function addDepartment() {
+  inquirer
+    .prompt([
+      {
+        name: "name",
+        type: "input",
+        message: "What Department would you like to add?",
+      },
+    ])
+    .then(function (res) {
+      const query = connection.query(
+        "INSERT INTO department SET ? ",
+        {
+          name: res.name,
         },
         function (err) {
           if (err) throw err;
