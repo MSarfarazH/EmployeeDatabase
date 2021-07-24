@@ -1,6 +1,6 @@
 const inquirer = require("inquirer");
 const mysql = require("mysql");
-const cTable = require("console.table");
+const ConsoleTable = require("console.table");
 
 const connection = mysql.createConnection({
   host: "localhost",
@@ -33,7 +33,7 @@ function inquire() {
     })
 
     .then(function (response) {
-      // console.log(response)
+      console.log(response);
       if (response.choice === "View All Employees") {
         viewAllEmployees();
       }
@@ -64,6 +64,7 @@ function viewAllEmployees() {
     function (err, res) {
       if (err) throw err;
       console.table(res);
+      console.log(res);
       inquire();
     }
   );
@@ -96,13 +97,13 @@ function pickRole() {
   connection.query("SELECT * FROM role", function (err, res) {
     for (let i = 0; i < res.length; i++) {
       roleArray.push(res[i].title);
-  }
+    }
   });
   return rolesArray;
 }
 
 const managersArray = [];
-function selectManager() {
+function pickManager() {
   connection.query(
     "SELECT first_name, last_name FROM employee WHERE manager_id IS NULL",
     function (err, res) {
@@ -115,5 +116,98 @@ function selectManager() {
   return managersArray;
 }
 
+function updateEmployee() {
+  connection.query(
+    "SELECT employee.last_name, role.title FROM employee JOIN role ON employee.role_id = role.id;",
+    function (err, res) {
+      if (err) throw err;
+      console.log(res);
+      inquirer
+        .prompt([
+          {
+            name: "lastName",
+            type: "list",
+            choices: function () {
+              const lastName = [];
+              for (const i = 0; i < res.length; i++) {
+                lastName.push(res[i].last_name);
+              }
+              return lastName;
+            },
+            message: "What is the Employee's last name? ",
+          },
+          {
+            name: "role",
+            type: "list",
+            message: "What is the Employees new title? ",
+            choices: pickRole(),
+          },
+        ])
+        .then(function (res) {
+          const roleId = pickRole().indexOf(res.role) + 1;
+          connection.query(
+            "UPDATE employee SET WHERE ?",
+            {
+              last_name: res.lastName,
+            },
+            {
+              role_id: roleId,
+            },
+            function (err) {
+              if (err) throw err;
+              console.table(res);
+              inquire();
+            }
+          );
+        });
+    }
+  );
+}
+
+function addEmployee() {
+  inquirer
+    .prompt([
+      {
+        name: "firstname",
+        type: "input",
+        message: "Please enter their first name ",
+      },
+      {
+        name: "lastname",
+        type: "input",
+        message: "Please enter their last name ",
+      },
+      {
+        name: "role",
+        type: "list",
+        message: "Please enter employees role",
+        choices: pickRole(),
+      },
+      {
+        name: "choice",
+        type: "list",
+        message: "Please enter managers name",
+        choices: pickManager(),
+      },
+    ])
+    .then(function (res) {
+      const roleId = pickRole().indexOf(res.role) +1;
+      const managerId = pickManager().indexOf(res.choice) +1;
+      connection.query(
+        "INSERT INTO employee SET ?",
+        {
+          first_name: res.firstName,
+          last_name: res.lastName,
+          manager_id: managerId,
+          role_id: roleId,
+        },
+        function (err) {
+          if (err) throw err;
+          console.table(res);
+          inquire();
+        }
+      );
+    });
+}
 
 inquire();
