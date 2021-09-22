@@ -1,5 +1,6 @@
 # Employee Database
-
+  _________________________
+  
   ## Licensing:
   [![license](https://img.shields.io/badge/license-None-blue)](https://shields.io)
   _________________________
@@ -14,7 +15,7 @@
   - [License](#License)
 
   - [Additional Info](#additional-info)
-
+  _________________________
 
   ## Description:
   I have created an app with MySQL and with the use of Node.js. This app gives the user to track information regarding their company. Employees, roles, and departments can be tracked and edited
