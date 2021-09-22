@@ -2,7 +2,8 @@
 
   ## Licensing:
   [![license](https://img.shields.io/badge/license-None-blue)](https://shields.io)
-  ========================
+  _________________________
+
   ## Table of Contents 
   - [Description](#desc)
 
@@ -51,5 +52,4 @@
    - Github: [m.sarfaraz.h](https://github.com/m.sarfaraz.h)
   - Email: m.s.hussain@outlook.com
 
-  ______________________________
 
